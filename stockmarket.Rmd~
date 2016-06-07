@@ -1,0 +1,105 @@
+---
+title: "public fiance"
+author: "qiufei"
+date: "2016-06-07"
+output: 
+  html_document: 
+    fig_height: 7
+    fig_width: 9
+    keep_md: yes
+    number_sections: yes
+    theme: readable
+    toc: yes
+---
+
+```{r setup,Message=FALSE,echo=FALSE,include=FALSE,warning=FALSE}
+
+# load needed packages
+library(knitr)
+opts_chunk$set(Message=FALSE,echo=FALSE)
+library(ggplot2)
+library(reshape2)
+library(Quandl)
+Quandl.api_key("9iGeZZoG6Vc46rfs1AgJ")
+library(pdfetch)
+library(quantmod)
+options("getSymbols.warning4.0"=FALSE)
+library(scales)
+library(plyr)
+library(dplyr)
+options(warn=-1)          #suprress warning globally
+## the default is
+## options(warn=0)
+
+```
+
+
+# 政府债务占GDP的比重 #
+
+## 总债务 ##
+
+```{r gross debt}
+
+## 
+codes = c('ODA/FRA_GGXWDG_NGDP','ODA/IND_GGXWDG_NGDP','ODA/DEU_GGXWDG_NGDP','ODA/GBR_GGXWDG_NGDP','ODA/CHN_GGXWDG_NGDP','ODA/USA_GGXWDG_NGDP','ODA/JPN_GGXWDG_NGDP')
+names = c('date','france','india','german','uk','china','usa','japan')
+
+gov.debt = Quandl(codes)
+colnames(gov.debt) = names
+
+gov.plot = melt(gov.debt,id = 'date')
+
+ggplot(gov.plot,aes(x = date,y = value,color = variable,shape = variable))+
+    geom_line()+
+    geom_point()+
+    ggtitle('各国政府总债务占GDP的比重')
+
+
+
+
+```
+
+## 净债务 ##
+
+出去日本,在2009年以前,各主要发达国家政府净债务占GDP的比重运行轨迹保持一致,基本在50%以下.
+
+2009年后,除德国的政府净债务比重没有发生较大变化之外,主要发达国家政府净债务比重快速上升.
+
+```{r gov net debt}
+
+codes2 = c('ODA/FRA_GGXWDN_NGDP','ODA/DEU_GGXWDN_NGDP','ODA/GBR_GGXWDN_NGDP','ODA/USA_GGXWDN_NGDP','ODA/JPN_GGXWDN_NGDP')
+names2 = c('date','france','german','uk','usa','japan')
+## 
+gov.debt2 = Quandl(codes2)
+colnames(gov.debt2) = names2
+## 
+gov.plot2 = melt(gov.debt2,id = 'date')
+##
+
+ggplot(gov.plot2,aes(x = date,y = value,color = variable,shape = variable))+
+    geom_line()+
+    geom_point()+
+    ggtitle('各国政府净债务占GDP的比重')  
+
+```
+
+# saving rate #
+
+中国储蓄率在2000年跌倒谷底(跌回80年代水平),到2009年达到高峰,目前一路下降,预测也是持续下降到2022年,回到2000年的水平(35.6%).
+
+```{r saving rate}
+
+codes = c('ODA/CHN_NGSD_NGDP','ODA/DEU_NGSD_NGDP','ODA/FRA_NGSD_NGDP','ODA/GBR_NGSD_NGDP','ODA/USA_NGSD_NGDP','ODA/JPN_NGSD_NGDP')
+names = c('date','china','german','france','uk','usa','japan')
+## 
+saving = Quandl(codes)
+colnames(saving) = names
+saving.plot = melt(saving,id = 'date')
+## 
+ggplot(saving.plot,aes(x = date,y = value,color = variable,shape = variable))+
+    geom_line()+
+    geom_point()+
+    ggtitle('各国储蓄率')  
+  
+
+```

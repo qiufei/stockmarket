@@ -1,0 +1,63 @@
+---
+title: "stock market"
+author: "qiufei"
+date: "2016-06-07"
+output: 
+  html_document: 
+    fig_height: 7
+    fig_width: 9
+    keep_md: yes
+    number_sections: yes
+    theme: readable
+    toc: yes
+---
+
+```{r setup,Message=FALSE,echo=FALSE,include=FALSE,warning=FALSE}
+
+# load needed packages
+library(knitr)
+opts_chunk$set(Message=FALSE,echo=FALSE)
+library(ggplot2)
+library(reshape2)
+library(Quandl)
+Quandl.api_key("9iGeZZoG6Vc46rfs1AgJ")
+library(pdfetch)
+library(quantmod)
+options("getSymbols.warning4.0"=FALSE)
+library(scales)
+library(plyr)
+library(dplyr)
+options(warn=-1)          #suprress warning globally
+## the default is
+## options(warn=0)
+
+```
+
+
+# 股市市值占GDP的比重 #
+
+事后来看,天朝与倒霉的日本在2006年同时走上了股市市值占GDP比重高速上升的局面,怪不得后来要发生股灾.
+
+```{r stock market}
+
+## data code
+codes = c('WGFD/CHN_GFDD_DM_01','WGFD/USA_GFDD_DM_01','WGFD/DEU_GFDD_DM_01','WGFD/JPN_GFDD_DM_01','WGFD/WLD_GFDD_DM_01')
+## data names
+names = c('date','china','usa','german','japan','world')
+## get data
+stm = Quandl(codes)
+## rename data column
+colnames(stm) = names
+## melt for ggplot2
+stm.plot = melt(stm,id = 'date')
+## plot
+ggplot(stm.plot,aes(x = date,y = value,color = variable,shape = variable))+
+    geom_line()+
+    geom_point()+
+    ggtitle('股市市值占GDP的比重')
+
+
+
+
+```
+
